@@ -1,4 +1,4 @@
-package com.vnpt.product;
+package com.vnpt.model;
 
 import javax.persistence.*;
 
@@ -13,19 +13,20 @@ public class Product {
     private String code;
     @Column(name = "name")
     private String name;
-    @Column(name = "product_type")
-    private String typeProduct;
+    @ManyToOne
+    @JoinColumn(name = "product_type")
+    private TypeProduct productType;
     private int price;
     @Column(name = "import_price")
     private int importPrice;
 
     public Product(){}
 
-    public Product(long id, String code, String name, String typeProduct, int price, int importPrice) {
+    public Product(long id, String code, String name, TypeProduct productType, int price, int importPrice) {
         this.id = id;
         this.code = code;
         this.name = name;
-        this.typeProduct = typeProduct;
+        this.productType = productType;
         this.price = price;
         this.importPrice = importPrice;
     }
@@ -54,12 +55,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getTypeProduct() {
-        return typeProduct;
+    public TypeProduct getProductType() {
+        return productType;
     }
 
-    public void setTypeProduct(String typeProduct) {
-        this.typeProduct = typeProduct;
+    public void setProductType(TypeProduct productType) {
+        this.productType = productType;
     }
 
     public int getPrice() {
@@ -77,4 +78,5 @@ public class Product {
     public void setImportPrice(int importPrice) {
         this.importPrice = importPrice;
     }
+
 }

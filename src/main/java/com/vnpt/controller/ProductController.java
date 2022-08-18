@@ -1,5 +1,7 @@
-package com.vnpt.product;
+package com.vnpt.controller;
 
+import com.vnpt.service.IProductService;
+import com.vnpt.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,18 @@ public class ProductController {
     @Autowired
     IProductService productService;
 
-    @GetMapping("/products")
+    @RequestMapping(path = {"/products/page"},method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String,Object> getProductListByPageNumber(@RequestParam(name = "page")int page,
+                                                     @RequestParam(name = "per_page")int perPage){
+        Map<String, Object> response = new HashMap<>();
+        response.put("data",productService.getFollowPage(page,perPage));
+        response.put("message","success");
+        response.put("status",200);
+        return response;
+    }
+
+    @RequestMapping(path = {"/products"},method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public Map<String,Object> getProductList(){
         Map<String, Object> response = new HashMap<>();

@@ -1,13 +1,17 @@
-package com.vnpt.product;
+package com.vnpt.service;
 
+import com.vnpt.data_access.IProductRepository;
 import com.vnpt.exception.NotFoundException;
+import com.vnpt.model.Product;
+import com.vnpt.service.IProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class ProductService implements IProductService{
+public class ProductService implements IProductService {
 
     private IProductRepository productRepository;
 
@@ -19,7 +23,7 @@ public class ProductService implements IProductService{
     public List<Product> getProductList() {
         List<Product> productList = productRepository.findAll();
         if(productList.isEmpty()) throw new NotFoundException("server error!");
-        return productRepository.findAll();
+        return productList;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class ProductService implements IProductService{
         if(oldProduct == null) throw new NotFoundException("không tìm thấy!");
         oldProduct.setCode(product.getCode());
         oldProduct.setName(product.getName());
-        oldProduct.setTypeProduct(product.getTypeProduct());
+        oldProduct.setProductType(product.getProductType());
         oldProduct.setPrice(product.getPrice());
         oldProduct.setImportPrice(product.getImportPrice());
 
@@ -52,7 +56,18 @@ public class ProductService implements IProductService{
 
     @Override
     public void deleteProductById(long id) {
-        productRepository.deleteById(id);
+        try{
+            productRepository.deleteById(id);
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
+    }
+
+    @Override
+    public Page<Product> getFollowPage(int page, int per_page) {
+        Page<Product> products = productRepository.findAll(PageRequest.of(page,per_page));
+        if(products.isEmpty()) throw new NotFoundException("server error!");
+        return products;
     }
 
 }

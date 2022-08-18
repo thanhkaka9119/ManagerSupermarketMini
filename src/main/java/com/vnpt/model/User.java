@@ -1,44 +1,73 @@
-package com.vnpt.user;
+package com.vnpt.model;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public class User {
-   private String code;
-   private String name;
-   private String birthday;
-   private String address;
-   private String email;
-   private String identifier;
+import javax.persistence.*;
+import java.util.Date;
 
+@Entity
+@Table(name = "user")
+public class User {
+   @Id
+   @GeneratedValue(strategy = GenerationType.IDENTITY)
+   private long id;
+   @Column(name = "code")
+   private String code;
+   @Column(name = "name")
+   private String name;
+   @Column(name = "birthday", columnDefinition = "DATETIME")
+   @Temporal(TemporalType.TIMESTAMP)
+   private Date birthday;
+   @Column(name = "address")
+   private String address;
+   @Column(name = "email")
+   private String email;
+   @Column(name = "identifier")
+   private String identifier;
+   @Transient
+   private String stringBirthday;
+   @Transient
    private MultipartFile fileImg;
 
+   @Column(name = "url_avatar")
    private String urlAvatar;
-   private String typeUser;
+
+   @ManyToOne
+   @JoinColumn(name = "user_type")
+   private TypeUser typeUser;
 
    public User(){}
 
-   public User(String code, String name, String birthday, String address,
-               String email, String identifier, MultipartFile fileImg, String typeUser) {
+   public User(String code, String name, String address,
+               String email, String identifier, MultipartFile fileImg) {
       this.code = code;
       this.name = name;
-      this.birthday = birthday;
       this.address = address;
       this.email = email;
       this.identifier = identifier;
       this.fileImg= fileImg;
-      this.typeUser = typeUser;
    }
 
-   public User(String code, String name, String birthday,
-               String address, String email, String identifier, String urlAvatar, String typeUser) {
+   public User(String code, String name,
+               String address, String email, String identifier, String urlAvatar) {
       this.code = code;
       this.name = name;
-      this.birthday = birthday;
       this.address = address;
       this.email = email;
       this.identifier = identifier;
       this.urlAvatar = urlAvatar;
-      this.typeUser = typeUser;
+   }
+
+   public User(long id, String code, String name, String address,
+               String email, String identifier, MultipartFile fileImg, String urlAvatar) {
+      this.id = id;
+      this.code = code;
+      this.name = name;
+      this.address = address;
+      this.email = email;
+      this.identifier = identifier;
+      this.fileImg = fileImg;
+      this.urlAvatar = urlAvatar;
    }
 
    public String getCode() {
@@ -57,11 +86,11 @@ public class User {
       this.name = name;
    }
 
-   public String getBirthday() {
+   public Date getBirthday() {
       return birthday;
    }
 
-   public void setBirthday(String birthday) {
+   public void setBirthday(Date birthday) {
       this.birthday = birthday;
    }
 
@@ -97,11 +126,11 @@ public class User {
       this.urlAvatar = urlAvatar;
    }
 
-   public String getTypeUser() {
+   public TypeUser getTypeUser() {
       return typeUser;
    }
 
-   public void setTypeUser(String typeUser) {
+   public void setTypeUser(TypeUser typeUser) {
       this.typeUser = typeUser;
    }
 
@@ -113,18 +142,11 @@ public class User {
       this.fileImg = fileImg;
    }
 
-   @Override
-   public String toString() {
-      return "User{" +
-              "code='" + code + '\'' +
-              ", name='" + name + '\'' +
-              ", birthday='" + birthday + '\'' +
-              ", address='" + address + '\'' +
-              ", email='" + email + '\'' +
-              ", identifier='" + identifier + '\'' +
-              ", fileImg=" + fileImg +
-              ", urlAvatar='" + urlAvatar + '\'' +
-              ", typeUser='" + typeUser + '\'' +
-              '}';
+   public long getId() {
+      return id;
+   }
+
+   public void setId(long id) {
+      this.id = id;
    }
 }
