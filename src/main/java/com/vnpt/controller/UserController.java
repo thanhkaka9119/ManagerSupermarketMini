@@ -1,5 +1,6 @@
 package com.vnpt.controller;
 
+import com.vnpt.model.TypeUser;
 import com.vnpt.model.User;
 import com.vnpt.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

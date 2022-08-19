@@ -22,6 +22,14 @@ public class Product {
 
     public Product(){}
 
+    public Product(String code, String name, TypeProduct productType, int price, int importPrice) {
+        this.code = code;
+        this.name = name;
+        this.productType = productType;
+        this.price = price;
+        this.importPrice = importPrice;
+    }
+
     public Product(long id, String code, String name, TypeProduct productType, int price, int importPrice) {
         this.id = id;
         this.code = code;

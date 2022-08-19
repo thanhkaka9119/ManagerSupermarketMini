@@ -17,7 +17,11 @@ public class TypeProduct {
 
     public TypeProduct(){}
 
-    public TypeProduct(long id,String name) {
+    public TypeProduct(String name) {
+        this.name = name;
+    }
+
+    public TypeProduct(long id, String name) {
         this.id = id;
         this.name = name;
     }

@@ -60,7 +60,7 @@ public class ProductController {
 
     @RequestMapping(path = "/products/{id}", method = RequestMethod.PATCH)
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String,Object> updateProductByIndex(@PathVariable(name = "id")int id, @RequestBody Product product){
+    public Map<String,Object> updateProductById(@PathVariable(name = "id")long id, @RequestBody Product product){
         Map<String, Object> response = new HashMap<>();
         response.put("data",productService.updateProductById(id,product));
         response.put("message","success");
@@ -70,7 +70,7 @@ public class ProductController {
 
     @DeleteMapping("/products/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteProductByIndex(@PathVariable(name = "id")long id){
+    public void deleteProductById(@PathVariable(name = "id")long id){
         productService.deleteProductById(id);
     }
 

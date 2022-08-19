@@ -17,6 +17,10 @@ public class TypeUser {
 
     public TypeUser(){}
 
+    public TypeUser(String name) {
+        this.name = name;
+    }
+
     public TypeUser(long id,String name) {
         this.id = id;
         this.name = name;

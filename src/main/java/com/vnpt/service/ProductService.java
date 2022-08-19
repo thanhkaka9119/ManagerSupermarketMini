@@ -3,7 +3,6 @@ package com.vnpt.service;
 import com.vnpt.data_access.IProductRepository;
 import com.vnpt.exception.NotFoundException;
 import com.vnpt.model.Product;
-import com.vnpt.service.IProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

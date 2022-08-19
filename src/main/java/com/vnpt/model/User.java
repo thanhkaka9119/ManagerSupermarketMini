@@ -25,8 +25,6 @@ public class User {
    @Column(name = "identifier")
    private String identifier;
    @Transient
-   private String stringBirthday;
-   @Transient
    private MultipartFile fileImg;
 
    @Column(name = "url_avatar")
@@ -36,38 +34,21 @@ public class User {
    @JoinColumn(name = "user_type")
    private TypeUser typeUser;
 
+   @Transient
+   private String stringType;
+
    public User(){}
 
-   public User(String code, String name, String address,
-               String email, String identifier, MultipartFile fileImg) {
+   public User(String code, String name, Date birthday, String address,
+               String email, String identifier, String urlAvatar, TypeUser typeUser) {
       this.code = code;
       this.name = name;
-      this.address = address;
-      this.email = email;
-      this.identifier = identifier;
-      this.fileImg= fileImg;
-   }
-
-   public User(String code, String name,
-               String address, String email, String identifier, String urlAvatar) {
-      this.code = code;
-      this.name = name;
+      this.birthday = birthday;
       this.address = address;
       this.email = email;
       this.identifier = identifier;
       this.urlAvatar = urlAvatar;
-   }
-
-   public User(long id, String code, String name, String address,
-               String email, String identifier, MultipartFile fileImg, String urlAvatar) {
-      this.id = id;
-      this.code = code;
-      this.name = name;
-      this.address = address;
-      this.email = email;
-      this.identifier = identifier;
-      this.fileImg = fileImg;
-      this.urlAvatar = urlAvatar;
+      this.typeUser = typeUser;
    }
 
    public String getCode() {
@@ -126,14 +107,6 @@ public class User {
       this.urlAvatar = urlAvatar;
    }
 
-   public TypeUser getTypeUser() {
-      return typeUser;
-   }
-
-   public void setTypeUser(TypeUser typeUser) {
-      this.typeUser = typeUser;
-   }
-
    public MultipartFile getFileImg() {
       return fileImg;
    }
@@ -148,5 +121,20 @@ public class User {
 
    public void setId(long id) {
       this.id = id;
+   }
+
+   public TypeUser getTypeUser() {
+      return typeUser;
+   }
+   public void setTypeUser(TypeUser typeUser) {
+      this.typeUser = typeUser;
+   }
+
+   public String getStringType() {
+      return stringType;
+   }
+
+   public void setStringType(String stringType) {
+      this.stringType = stringType;
    }
 }
