@@ -1,5 +1,6 @@
 package com.vnpt.service;
 
+import com.vnpt.common.IBaseService;
 import com.vnpt.data_access.IProductRepository;
 import com.vnpt.exception.NotFoundException;
 import com.vnpt.model.Product;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ProductService implements IProductService {
+public class ProductService implements IBaseService<Product,Long> {
 
     private IProductRepository productRepository;
 
@@ -19,42 +20,55 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProductList() {
-        List<Product> productList = productRepository.findAll();
-        if(productList.isEmpty()) throw new NotFoundException("server error!");
-        return productList;
+    public List<Product> getList() {
+        try{
+            List<Product> productList = productRepository.findAll();
+            return productList;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
 
     @Override
-    public Product getProductById(long id) {
-        Product product = productRepository.findById(id);
-        if(product == null) throw new NotFoundException("Không tìm thấy!");
-        return productRepository.findById(id);
+    public Product getById(Long id) {
+        try{
+            Product product = productRepository.findById((long)id);
+            return product;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
 
     @Override
-    public Product updateProductById(long id,Product product) {
-        Product oldProduct = productRepository.findById(id);
-        if(oldProduct == null) throw new NotFoundException("không tìm thấy!");
-        oldProduct.setCode(product.getCode());
-        oldProduct.setName(product.getName());
-        oldProduct.setProductType(product.getProductType());
-        oldProduct.setPrice(product.getPrice());
-        oldProduct.setImportPrice(product.getImportPrice());
+    public Product updateById(Long id, Product product) {
+        try{
+            Product oldProduct = productRepository.findById((long)id);
 
-        Product newProduct = productRepository.save(oldProduct);
-        return newProduct;
+            oldProduct.setCode(product.getCode());
+            oldProduct.setName(product.getName());
+            oldProduct.setProductType(product.getProductType());
+            oldProduct.setPrice(product.getPrice());
+            oldProduct.setImportPrice(product.getImportPrice());
+
+            Product newProduct = productRepository.save(oldProduct);
+            return newProduct;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
 
     @Override
-    public Product saveProduct(Product product) {
-        Product newProduct =  productRepository.save(product);
-        if(newProduct == null) throw  new NotFoundException("server error!");
-        return newProduct;
+    public Product save(Product product) {
+        try{
+            Product newProduct =  productRepository.save(product);
+            return newProduct;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
 
     @Override
-    public void deleteProductById(long id) {
+    public void deleteById(Long id) {
         try{
             productRepository.deleteById(id);
         }catch (Exception ex){
@@ -62,11 +76,12 @@ public class ProductService implements IProductService {
         }
     }
 
-    @Override
     public Page<Product> getFollowPage(int page, int per_page) {
-        Page<Product> products = productRepository.findAll(PageRequest.of(page,per_page));
-        if(products.isEmpty()) throw new NotFoundException("server error!");
-        return products;
+        try{
+            Page<Product> products = productRepository.findAll(PageRequest.of(page,per_page));
+            return products;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
-
 }

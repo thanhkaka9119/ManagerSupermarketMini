@@ -1,5 +1,6 @@
 package com.vnpt.service;
 
+import com.vnpt.common.IBaseService;
 import com.vnpt.data_access.IUserRespository;
 import com.vnpt.exception.NotFoundException;
 import com.vnpt.model.TypeUser;
@@ -13,14 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserService implements IUserService {
+public class UserService implements IBaseService<User,Long> {
 
     private final String httpUrl = "http://localhost:8080/uploads/images/";
-
     private IUserRespository userRespository;
-    @Autowired
-    private ITypeUserService typeUserService;
     private UploadFile uploadFile;
+    @Autowired
+    private IBaseService typeUserService;
 
     public UserService(UploadFile uploadFile, IUserRespository userRespository){
         this.userRespository = userRespository;
@@ -28,41 +28,32 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> getUserList() {
-        List<User> userList = userRespository.findAll();
-        if(userList.isEmpty()) throw new NotFoundException("server error!");
-        return userList;
-    }
-
-    @Override
-    public User getUserById(long id) {
-        User user = userRespository.findById(id);
-        if(user == null) throw new NotFoundException("không có dữ liệu!");
-        return user;
-    }
-
-    @Override
-    public User saveUser(User newUser) {
+    public List<User> getList() {
         try{
-
-            String urlAvatar = httpUrl + uploadFile.setFile(newUser.getFileImg());
-            if(urlAvatar == null) throw new NotFoundException("server error!");
-            TypeUser typeUser = typeUserService.getTypeUserById(Long.parseLong(newUser.getStringType()));
-            User user = new User(newUser.getCode(),newUser.getName(),newUser.getBirthday(),newUser.getAddress(),
-                        newUser.getEmail(),newUser.getIdentifier(),urlAvatar,typeUser);
-            userRespository.save(user);
-            return user;
-        }catch (Exception ex) {
+            List<User> userList = userRespository.findAll();
+            return userList;
+        }catch (Exception ex){
             throw new NotFoundException("server error!");
         }
     }
 
     @Override
-    public User updateUserById(long id, User user) {
+    public User getById(Long id) {
         try{
-            User oldUser = userRespository.findById(id);
-            TypeUser typeUser = typeUserService.getTypeUserById(Long.parseLong(user.getStringType()));
+            User user = userRespository.findById((long)id);
+            return user;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
+    }
+
+    @Override
+    public User updateById(Long id, User user) {
+        try{
+            User oldUser = userRespository.findById((long)id);
+            TypeUser typeUser = (TypeUser) typeUserService.getById(Long.parseLong(user.getStringType()));
             String urlAvatar = uploadFile.setFile(user.getFileImg());
+
             oldUser.setCode(user.getCode());
             oldUser.setName(user.getName());
             oldUser.setBirthday(user.getBirthday());
@@ -78,7 +69,21 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void deleteUserById(long id) {
+    public User save(User user) {
+        try{
+            String urlAvatar = httpUrl + uploadFile.setFile(user.getFileImg());
+            TypeUser typeUser = (TypeUser) typeUserService.getById(Long.parseLong(user.getStringType()));
+            User newUser = new User(user.getCode(),user.getName(),user.getBirthday(),user.getAddress(),
+                    user.getEmail(),user.getIdentifier(),urlAvatar,typeUser);
+            userRespository.save(newUser);
+            return user;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
+    }
+
+    @Override
+    public void deleteById(Long id) {
         try{
             userRespository.deleteById(id);
         }catch (Exception ex){
@@ -86,11 +91,13 @@ public class UserService implements IUserService {
         }
     }
 
-    @Override
     public Page<User> getFollowPage(int page, int per_page) {
-        Page<User> users = userRespository.findAll(PageRequest.of(page,per_page));
-        if(users.isEmpty()) throw new NotFoundException("server error!");
-        return users;
+        try{
+            Page<User> users = userRespository.findAll(PageRequest.of(page,per_page));
+            if(users.isEmpty()) throw new NotFoundException("server error!");
+            return users;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
     }
-
 }

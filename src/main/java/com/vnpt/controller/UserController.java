@@ -1,8 +1,7 @@
 package com.vnpt.controller;
 
-import com.vnpt.model.TypeUser;
 import com.vnpt.model.User;
-import com.vnpt.service.IUserService;
+import com.vnpt.common.IBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +14,13 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private IUserService userService;
+    private IBaseService userService;
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
     public Map<String,Object> getUserList(){
         Map<String, Object> response = new HashMap<>();
-        response.put("data",userService.getUserList());
+        response.put("data",userService.getList());
         response.put("message","success");
         response.put("status",200);
         return response;
@@ -31,7 +30,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public Map<String, Object> getUserById(@PathVariable(name="id")long id){
         Map<String, Object> response = new HashMap<>();
-        response.put("data",userService.getUserById(id));
+        response.put("data",userService.getById(id));
         response.put("message","success");
         response.put("status",200);
         return response;
@@ -41,7 +40,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object>  saveUser(@ModelAttribute User user){
         Map<String, Object> response = new HashMap<>();
-        response.put("data",userService.saveUser(user));
+        response.put("data",userService.save(user));
         response.put("message","success");
         response.put("status",201);
         return response;
@@ -51,7 +50,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> updateUserById(@PathVariable(name = "id")long id, @ModelAttribute User user){
         Map<String, Object> response = new HashMap<>();
-        response.put("data",userService.updateUserById(id,user));
+        response.put("data",userService.updateById(id,user));
         response.put("message","success");
         response.put("status",201);
         return response;
@@ -60,7 +59,7 @@ public class UserController {
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUserById(@PathVariable(name = "id")long id){
-        userService.deleteUserById(id);
+        userService.deleteById(id);
     }
 
     @RequestMapping(path = {"/users/page"},method = RequestMethod.GET)
@@ -68,7 +67,7 @@ public class UserController {
     public Map<String,Object> getProductListByPageNumber(@RequestParam(name = "page")int page,
                                                          @RequestParam(name = "per_page")int perPage){
         Map<String, Object> response = new HashMap<>();
-        response.put("data",userService.getFollowPage(page,perPage));
+        response.put("data","");
         response.put("message","success");
         response.put("status",200);
         return response;

@@ -1,7 +1,7 @@
 package com.vnpt.controller;
 
 import com.vnpt.model.TypeUser;
-import com.vnpt.service.ITypeUserService;
+import com.vnpt.common.IBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,13 +13,13 @@ import java.util.Map;
 @RequestMapping("/api/v1")
 public class TypeUserController {
     @Autowired
-    private ITypeUserService typeUserService;
+    private IBaseService typeUserService;
 
     @GetMapping("/type-user")
     @ResponseStatus(HttpStatus.OK)
     public Map<String,Object> getTypeUserList(){
         Map<String, Object> response = new HashMap<>();
-        response.put("data", typeUserService.getTypeUserList());
+        response.put("data", typeUserService.getList());
         response.put("message","success");
         response.put("status",200);
         return response;
@@ -29,7 +29,7 @@ public class TypeUserController {
     @ResponseStatus(HttpStatus.OK)
     public Map<String,Object> getTypeUserById(@PathVariable(name = "id")long id){
         Map<String, Object> response = new HashMap<>();
-        response.put("data", typeUserService.getTypeUserById(id));
+        response.put("data", typeUserService.getById(id));
         response.put("message","success");
         response.put("status",200);
         return response;
@@ -39,7 +39,7 @@ public class TypeUserController {
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> saveTypeUser(@RequestBody TypeUser typeUser){
         Map<String, Object> response = new HashMap<>();
-        response.put("data", typeUserService.saveTypeUser(typeUser));
+        response.put("data", typeUserService.save(typeUser));
         response.put("message","success");
         response.put("status",201);
         return response;
@@ -49,7 +49,7 @@ public class TypeUserController {
     @ResponseStatus(HttpStatus.CREATED)
     public Map<String, Object> updateTypeUserById(@PathVariable(name = "id")long id, @RequestBody TypeUser typeUser){
         Map<String, Object> response = new HashMap<>();
-        response.put("data", typeUserService.updateTypeUserById(id,typeUser));
+        response.put("data", typeUserService.updateById(id,typeUser));
         response.put("message","success");
         response.put("status",201);
         return response;
@@ -58,6 +58,6 @@ public class TypeUserController {
     @DeleteMapping("/type-user/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteProductByIndex(@PathVariable(name = "id")long id){
-        typeUserService.deleteTypeUserById(id);
+        typeUserService.deleteById(id);
     }
 }
