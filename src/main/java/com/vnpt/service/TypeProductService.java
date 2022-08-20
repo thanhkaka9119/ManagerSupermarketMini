@@ -55,7 +55,7 @@ public class TypeProductService implements IBaseService<TypeProduct, Long> {
             TypeProduct newTypeProduct = typeProductRespository.save(typeProduct);
             return newTypeProduct;
         }catch (Exception ex){
-            throw new NotFoundException("không tìm thấy!");
+            throw new NotFoundException("server error!");
         }
     }
 

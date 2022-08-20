@@ -1,7 +1,5 @@
 package com.vnpt.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class ErrorMessage {
     private int status;
     private String message;
