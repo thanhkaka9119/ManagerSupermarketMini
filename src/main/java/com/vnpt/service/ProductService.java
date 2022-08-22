@@ -24,22 +24,15 @@ public class ProductService implements IBaseService<Product,Long> {
 
     @Override
     public List<Product> getList() {
-        try{
-            List<Product> productList = productRepository.findAll();
-            return productList;
-        }catch (Exception ex){
-            throw new NotFoundException("server error!");
-        }
+        List<Product> productList = productRepository.findAll();
+        return productList;
     }
 
     @Override
     public Product getById(Long id) {
-        try{
-            Product product = productRepository.findById((long)id);
-            return product;
-        }catch (Exception ex){
-            throw new NotFoundException("server error!");
-        }
+        Product product = productRepository.findById((long)id);
+        if(product == null) throw new NotFoundException("sản phẩm không tồn tại!");
+        return product;
     }
 
     @Override
