@@ -2,6 +2,7 @@ package com.vnpt.controller;
 
 import com.vnpt.model.User;
 import com.vnpt.common.IBaseService;
+import com.vnpt.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -64,10 +65,24 @@ public class UserController {
 
     @RequestMapping(path = {"/users/page"},method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public Map<String,Object> getProductListByPageNumber(@RequestParam(name = "page")int page,
-                                                         @RequestParam(name = "per_page")int perPage){
+    public Map<String,Object> getByPageNumber(@RequestParam(name = "page",defaultValue = "0")int page,
+                                                         @RequestParam(name = "per_page",defaultValue = "10")int perPage){
         Map<String, Object> response = new HashMap<>();
-        response.put("data","");
+        UserService userServiceMore = (UserService) userService;
+        response.put("data",userServiceMore.getFollowPage(page,perPage));
+        response.put("message","success");
+        response.put("status",200);
+        return response;
+    }
+
+    @GetMapping("/users/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String,Object> readUsersWithFilter(@RequestParam("query")String query,
+                                                  @RequestParam(name = "page")int page,
+                                                  @RequestParam(name = "per_page")int per_page){
+        Map<String, Object> response = new HashMap<>();
+        UserService userServiceMore = (UserService) userService;
+        response.put("data",userServiceMore.filterUsers(query,page,per_page));
         response.put("message","success");
         response.put("status",200);
         return response;

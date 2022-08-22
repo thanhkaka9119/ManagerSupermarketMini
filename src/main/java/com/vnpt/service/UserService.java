@@ -1,16 +1,20 @@
 package com.vnpt.service;
 
+import com.vnpt.common.DataPaginate;
 import com.vnpt.common.IBaseService;
 import com.vnpt.data_access.IUserRespository;
 import com.vnpt.exception.NotFoundException;
+import com.vnpt.model.Product;
 import com.vnpt.model.TypeUser;
 import com.vnpt.model.User;
 import com.vnpt.util.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -91,13 +95,33 @@ public class UserService implements IBaseService<User,Long> {
         }
     }
 
-    public Page<User> getFollowPage(int page, int per_page) {
+    public DataPaginate<User> getFollowPage(int page, int per_page) {
         try{
-            Page<User> users = userRespository.findAll(PageRequest.of(page,per_page));
-            if(users.isEmpty()) throw new NotFoundException("server error!");
-            return users;
+            Pageable paging = PageRequest.of(page, per_page);
+            Page<User> users = userRespository.findAll(paging);
+            DataPaginate<User> dataPaginate = new DataPaginate<>();
+            dataPaginate.setContent(users.getContent());
+            dataPaginate.setPageNumber(users.getNumber());
+            dataPaginate.setTotalPages(users.getTotalPages());
+            return dataPaginate;
         }catch (Exception ex){
             throw new NotFoundException("server error!");
         }
     }
+
+    public DataPaginate<User> filterUsers(String query,int page, int per_page){
+        try{
+            Pageable paging = PageRequest.of(page, per_page);
+            Page<User> users = userRespository.findAllByNameContaining(query,paging);
+            DataPaginate<User> dataPaginate = new DataPaginate<>();
+            dataPaginate.setContent(users.getContent());
+            dataPaginate.setPageNumber(users.getNumber());
+            dataPaginate.setTotalPages(users.getTotalPages());
+            return dataPaginate;
+        }catch (Exception ex){
+            throw new NotFoundException("server error!");
+        }
+    }
+
+
 }

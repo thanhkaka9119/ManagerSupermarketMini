@@ -2,7 +2,9 @@ package com.vnpt.controller;
 
 import com.vnpt.model.Product;
 import com.vnpt.common.IBaseService;
+import com.vnpt.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,17 +17,6 @@ public class ProductController {
 
     @Autowired
     IBaseService productService;
-
-    @RequestMapping(path = {"/products/page"},method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public Map<String,Object> getProductListByPageNumber(@RequestParam(name = "page")int page,
-                                                     @RequestParam(name = "per_page")int perPage){
-        Map<String, Object> response = new HashMap<>();
-        response.put("data","");
-        response.put("message","success");
-        response.put("status",200);
-        return response;
-    }
 
     @RequestMapping(path = {"/products"},method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
@@ -74,4 +65,41 @@ public class ProductController {
         productService.deleteById(id);
     }
 
+    @RequestMapping(path = {"/products/page"},method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String,Object> getByPageNumber(@RequestParam(name = "page", defaultValue = "0")int page,
+                                              @RequestParam(name = "per_page", defaultValue = "10")int per_page){
+        Map<String, Object> response = new HashMap<>();
+        ProductService productServiceMore = (ProductService)productService;
+        response.put("data", productServiceMore.getFollowPage(page,per_page));
+        response.put("message","success");
+        response.put("status",200);
+        return response;
+    }
+
+    @GetMapping("/products/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String,Object> readProductsWithFilter(@RequestParam(name = "query")String query,
+                                                     @RequestParam(name = "page")int page,
+                                                     @RequestParam(name = "per_page")int per_page){
+        Map<String, Object> response = new HashMap<>();
+        ProductService productServiceMore = (ProductService)productService;
+        response.put("data", productServiceMore.filterProducts(query,page,per_page));
+        response.put("message","success");
+        response.put("status",200);
+        return response;
+    }
+
+    @GetMapping("/products/sort")
+    public Map<String,Object> sortProductWithPrice(@RequestParam(name = "sortby")String sortby,
+                                                   @RequestParam(name = "order")String order,
+                                                   @RequestParam(name = "page")int page,
+                                                   @RequestParam(name = "per_page")int per_page){
+        Map<String, Object> response = new HashMap<>();
+        ProductService productServiceMore = (ProductService)productService;
+        response.put("data", productServiceMore.sortProducts(sortby,order,page,per_page));
+        response.put("message","success");
+        response.put("status",200);
+        return response;
+    }
 }
