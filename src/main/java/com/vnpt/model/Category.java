@@ -1,28 +1,30 @@
 package com.vnpt.model;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Table(name = "type_product")
-public class TypeProduct {
+@Table(name = "category")
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "productType", cascade = CascadeType.ALL)
-    private Collection<Product> products;
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
 
-    public TypeProduct(){}
+    public Category() {
+    }
 
-    public TypeProduct(String name) {
+    public Category(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public TypeProduct(long id, String name) {
-        this.id = id;
+    public Category(String name) {
         this.name = name;
     }
 
@@ -40,5 +42,13 @@ public class TypeProduct {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }

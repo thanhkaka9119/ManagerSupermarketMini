@@ -1,4 +1,4 @@
-package com.vnpt.common;
+package com.vnpt.component;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

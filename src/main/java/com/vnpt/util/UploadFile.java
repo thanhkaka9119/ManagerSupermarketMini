@@ -37,7 +37,7 @@ public class UploadFile {
         return fileNameParts[fileNameParts.length - 1];
     }
 
-    public String setFile(MultipartFile file){
+    public String setFile(MultipartFile file) {
 //        if(file.isEmpty()){
 //            return null;
 //        }

@@ -3,138 +3,203 @@ package com.vnpt.model;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @Entity
 @Table(name = "user")
 public class User {
-   @Id
-   @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private long id;
-   @Column(name = "code")
-   private String code;
-   @Column(name = "name")
-   private String name;
-   @Column(name = "birthday", columnDefinition = "DATETIME")
-   @Temporal(TemporalType.TIMESTAMP)
-   private Date birthday;
-   @Column(name = "address")
-   private String address;
-   @Column(name = "email")
-   private String email;
-   @Column(name = "identifier")
-   private String identifier;
-   @Transient
-   private MultipartFile fileImg;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
 
-   @Column(name = "url_avatar")
-   private String urlAvatar;
+    @Column(name = "code")
+    private String code;
 
-   @ManyToOne
-   @JoinColumn(name = "user_type")
-   private TypeUser typeUser;
+    @Column(name = "name")
+    private String name;
 
-   @Transient
-   private String stringType;
+    @Column(name = "birthday", columnDefinition = "DATETIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date birthday;
 
-   public User(){}
+    @Column(name = "address")
+    private String address;
 
-   public User(String code, String name, Date birthday, String address,
-               String email, String identifier, String urlAvatar, TypeUser typeUser) {
-      this.code = code;
-      this.name = name;
-      this.birthday = birthday;
-      this.address = address;
-      this.email = email;
-      this.identifier = identifier;
-      this.urlAvatar = urlAvatar;
-      this.typeUser = typeUser;
-   }
+    @Column(name = "email")
+    private String email;
 
-   public String getCode() {
-      return code;
-   }
+    @Column(name = "identifier")
+    private String identifier;
 
-   public void setCode(String code) {
-      this.code = code;
-   }
+    @Transient
+    private MultipartFile fileImg;
 
-   public String getName() {
-      return name;
-   }
+    @Column(name = "url_avatar")
+    private String urlAvatar;
 
-   public void setName(String name) {
-      this.name = name;
-   }
+    @Column(name = "gender", length = 50)
+    private String gender;
 
-   public Date getBirthday() {
-      return birthday;
-   }
+    @Column(name = "user_name", length = 50)
+    private String username;
 
-   public void setBirthday(Date birthday) {
-      this.birthday = birthday;
-   }
+    @Column(name = "password")
+    private String password;
 
-   public String getAddress() {
-      return address;
-   }
+    @Column(name = "enabled")
+    private boolean enabled;
 
-   public void setAddress(String address) {
-      this.address = address;
-   }
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<UserRolePermission> userRolePermissions;
 
-   public String getEmail() {
-      return email;
-   }
+    @Transient
+    private ArrayList<String> permissions;
 
-   public void setEmail(String email) {
-      this.email = email;
-   }
+    public User() {
+    }
 
-   public String getIdentifier() {
-      return identifier;
-   }
+    public User(String username , String password) {
+        this.username  = username;
+        this.password = password;
+    }
 
-   public void setIdentifier(String identifier) {
-      this.identifier = identifier;
-   }
+    public User(long id, String name, String username, String password) {
+        this.id = id;
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
 
-   public String getUrlAvatar() {
-      return urlAvatar;
-   }
+    public User(String code, String name, Date birthday, String address,
+                String email, String identifier, String urlAvatar, String gender, String password) {
+        this.code = code;
+        this.name = name;
+        this.birthday = birthday;
+        this.address = address;
+        this.email = email;
+        this.identifier = identifier;
+        this.urlAvatar = urlAvatar;
+        this.gender = gender;
+        this.password = password;
+    }
 
-   public void setUrlAvatar(String urlAvatar) {
-      this.urlAvatar = urlAvatar;
-   }
+    public String getCode() {
+        return code;
+    }
 
-   public MultipartFile getFileImg() {
-      return fileImg;
-   }
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-   public void setFileImg(MultipartFile fileImg) {
-      this.fileImg = fileImg;
-   }
+    public String getName() {
+        return name;
+    }
 
-   public long getId() {
-      return id;
-   }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-   public void setId(long id) {
-      this.id = id;
-   }
+    public Date getBirthday() {
+        return birthday;
+    }
 
-   public TypeUser getTypeUser() {
-      return typeUser;
-   }
-   public void setTypeUser(TypeUser typeUser) {
-      this.typeUser = typeUser;
-   }
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
 
-   public String getStringType() {
-      return stringType;
-   }
+    public String getAddress() {
+        return address;
+    }
 
-   public void setStringType(String stringType) {
-      this.stringType = stringType;
-   }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getUrlAvatar() {
+        return urlAvatar;
+    }
+
+    public void setUrlAvatar(String urlAvatar) {
+        this.urlAvatar = urlAvatar;
+    }
+
+    public MultipartFile getFileImg() {
+        return fileImg;
+    }
+
+    public void setFileImg(MultipartFile fileImg) {
+        this.fileImg = fileImg;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public List<UserRolePermission> getUserRolePermissions() {
+        return userRolePermissions;
+    }
+
+    public void setUserRolePermissions(List<UserRolePermission> userRolePermissions) {
+        this.userRolePermissions = userRolePermissions;
+    }
+
+    public ArrayList<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(ArrayList<String> permissions) {
+        this.permissions = permissions;
+    }
 }

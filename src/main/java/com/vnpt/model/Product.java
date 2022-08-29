@@ -11,30 +11,26 @@ public class Product {
 
     @Column(name = "code")
     private String code;
+
     @Column(name = "name")
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "product_type")
-    private TypeProduct productType;
+
     private int price;
+
     @Column(name = "import_price")
     private int importPrice;
 
-    public Product(){}
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable=false)
+    private Category category;
 
-    public Product(String code, String name, TypeProduct productType, int price, int importPrice) {
-        this.code = code;
-        this.name = name;
-        this.productType = productType;
-        this.price = price;
-        this.importPrice = importPrice;
+    public Product() {
     }
 
-    public Product(long id, String code, String name, TypeProduct productType, int price, int importPrice) {
+    public Product(long id, String code, String name, int price, int importPrice) {
         this.id = id;
         this.code = code;
         this.name = name;
-        this.productType = productType;
         this.price = price;
         this.importPrice = importPrice;
     }
@@ -63,14 +59,6 @@ public class Product {
         this.name = name;
     }
 
-    public TypeProduct getProductType() {
-        return productType;
-    }
-
-    public void setProductType(TypeProduct productType) {
-        this.productType = productType;
-    }
-
     public int getPrice() {
         return price;
     }
@@ -87,4 +75,11 @@ public class Product {
         this.importPrice = importPrice;
     }
 
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }
