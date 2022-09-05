@@ -1,5 +1,8 @@
 package com.vnpt.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
@@ -11,16 +14,19 @@ public class Permission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String permissionKey;
-    private String permissionName;
 
-    @OneToMany(mappedBy = "permission", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<UserRolePermission> userRolePermissions;
+//    @OneToMany(mappedBy = "permission", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    @JsonBackReference
+//    private List<UserRolePermission> userRolePermissions;
+
+    @ManyToMany(mappedBy = "permissions")
+//    @JsonManagedReference
+    private List<Role> roles;
 
     public Permission(){}
 
-    public Permission(String permissionKey, String permissionName) {
+    public Permission(String permissionKey) {
         this.permissionKey = permissionKey;
-        this.permissionName = permissionName;
     }
 
     public long getId() {
@@ -31,14 +37,6 @@ public class Permission {
         this.id = id;
     }
 
-    public String getPermissionName() {
-        return permissionName;
-    }
-
-    public void setPermissionName(String permissionName) {
-        this.permissionName = permissionName;
-    }
-
     public String getPermissionKey() {
         return permissionKey;
     }
@@ -47,11 +45,4 @@ public class Permission {
         this.permissionKey = permissionKey;
     }
 
-    public List<UserRolePermission> getUserRolePermissions() {
-        return userRolePermissions;
-    }
-
-    public void setUserRolePermissions(List<UserRolePermission> userRolePermissions) {
-        this.userRolePermissions = userRolePermissions;
-    }
 }

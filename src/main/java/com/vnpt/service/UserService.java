@@ -2,35 +2,41 @@ package com.vnpt.service;
 
 import com.vnpt.common.DataPaginate;
 import com.vnpt.common.IBaseService;
+import com.vnpt.data_access.IRoleRepository;
 import com.vnpt.data_access.IUserRepository;
+import com.vnpt.dto.response.PaginationData;
+import com.vnpt.exception.DuplicateRecordException;
 import com.vnpt.exception.NotFoundException;
+import com.vnpt.exception.ServerErrorException;
+import com.vnpt.model.Role;
 import com.vnpt.model.User;
-import com.vnpt.security.jwt.JwtProvider;
 import com.vnpt.util.UploadFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
 public class UserService implements IBaseService<User, Long> {
 
-    private final String httpUrl = "http://localhost:8080/uploads/images/";
-    private final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    private final String HTTPURL = "http://localhost:8080/uploads/images/";
 
     @Autowired
     private IUserRepository userRepository;
+    @Autowired
+    private IRoleRepository roleRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     private UploadFile uploadFile;
-
-    @Autowired
-    private JwtProvider jwtUtil;
 
     public UserService(UploadFile uploadFile) {
         this.uploadFile = uploadFile;
@@ -42,126 +48,112 @@ public class UserService implements IBaseService<User, Long> {
             List<User> userList = userRepository.findAll();
             return userList;
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
     @Override
     public User getById(Long id) {
         try {
-            User user = userRepository.findById((long) id);
+//            User user = userRepository.findByUserId(id);
+//            return user;
+            return null;
+        } catch (Exception ex) {
+            throw new ServerErrorException("lỗi rồi!");
+        }
+    }
+
+    public Map<String,Object> findById(Long id) {
+        try {
+            Map<String,Object> user = userRepository.findByUserId(id);
             return user;
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
     @Override
     public User updateById(Long id, User user) {
         try {
-            User oldUser = userRepository.findById((long) id);
-            String urlAvatar = uploadFile.setFile(user.getFileImg());
-
-            oldUser.setCode(user.getCode());
-            oldUser.setName(user.getName());
-            oldUser.setBirthday(user.getBirthday());
-            oldUser.setAddress(user.getAddress());
-            oldUser.setEmail(user.getEmail());
-            oldUser.setIdentifier(user.getIdentifier());
-            oldUser.setUrlAvatar(httpUrl + urlAvatar);
-            oldUser.setGender(user.getGender());
-            oldUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-            return userRepository.save(oldUser);
+//            String urlAvatar = uploadFile.setFile(user.getFileImg());
+            userRepository.setUserByUserId(user.getAddress(),user.getBirthday(),
+                    user.getEmail(),user.getIdentifier(),user.getName(),passwordEncoder.encode(user.getPassword()),id);
+            userRepository.deleteUserRoleByUserId(id);
+            if(user.getRoleIdList().size() > 0){
+                for(long roleId:user.getRoleIdList()){
+                    userRepository.saveUserIdRoleId(id,roleId);
+                }
+            }
+            return userRepository.findById((long)id);
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            System.out.println(ex);
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
     @Transactional
     @Override
     public User save(User user) {
+        int existCode = userRepository.existByCode(user.getCode());
+        if(existCode > 0) throw new DuplicateRecordException("mã nhân viên đã tồn tại");
+        int existUsername = userRepository.existByUsername(user.getUsername());
+        if(existUsername > 0) throw new DuplicateRecordException("Tên đăng nhập đã tồn tại");
         try {
-            String urlAvatar = httpUrl + uploadFile.setFile(user.getFileImg());
+            String urlAvatar = HTTPURL + uploadFile.setFile(user.getFileImg());
             User newUser = new User(user.getCode(), user.getName(), user.getBirthday(), user.getAddress(),
-                    user.getEmail(), user.getIdentifier(), urlAvatar,user.getGender(),
-                    bCryptPasswordEncoder.encode(user.getPassword()));
+                    user.getEmail(), user.getIdentifier(), urlAvatar,user.getUsername(),passwordEncoder.encode(user.getPassword()));
             userRepository.save(newUser);
-            return user;
+            if(user.getRoleIdList().size() > 0){
+                for(long roleId:user.getRoleIdList()){
+                    userRepository.saveUserIdRoleId(newUser.getId(),roleId);
+                }
+            }
+            return newUser;
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
+        int existUserId = userRepository.existIdInOrder(id);
+        if(existUserId > 0) throw new DuplicateRecordException("Tài khoản có hoá đơn liên quan, không thể xoá!");
         try {
-            userRepository.deleteById(id);
+            userRepository.deleteUserRoleByUserId(id);
+            userRepository.deleteUserByUserId(id);
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
-    public DataPaginate<User> getFollowPage(int page, int per_page) {
+    public PaginationData getFollowPage(int page, int per_page) {
         try {
-            Pageable paging = PageRequest.of(page, per_page);
-            Page<User> users = userRepository.findAll(paging);
-            DataPaginate<User> dataPaginate = new DataPaginate<>();
-            dataPaginate.setContent(users.getContent());
-            dataPaginate.setPageNumber(users.getNumber());
-            dataPaginate.setTotalPages(users.getTotalPages());
-            return dataPaginate;
+            PaginationData responseData = new PaginationData();
+            int totalRecord = userRepository.getTotalUser();
+            int start = (page-1)*per_page;
+            List<Map<String,Object>> users = userRepository.getUserByNumberPage(start,per_page);
+            responseData.setContent(users);
+            responseData.setTotalCount(totalRecord);
+            return responseData;
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
 
-    public DataPaginate<User> filterUsers(String query, int page, int per_page) {
+    public PaginationData filterUsers(String searchString, int page, int per_page) {
         try {
-            Pageable paging = PageRequest.of(page, per_page);
-            Page<User> users = userRepository.findAllByNameContaining(query, paging);
-            DataPaginate<User> dataPaginate = new DataPaginate<>();
-            dataPaginate.setContent(users.getContent());
-            dataPaginate.setPageNumber(users.getNumber());
-            dataPaginate.setTotalPages(users.getTotalPages());
-            return dataPaginate;
+            PaginationData responseData = new PaginationData();
+            String keyword ='%' + searchString + '%';
+            int totalRecord = userRepository.getTotalUserSearch(keyword);
+            int start = (page-1)*per_page;
+            List<Map<String,Object>> products = userRepository.findByCodeAndPagination(keyword,start,per_page);
+            responseData.setContent(products);
+            responseData.setTotalCount(totalRecord);
+            return responseData;
         } catch (Exception ex) {
-            throw new NotFoundException("server error!");
+            throw new ServerErrorException("lỗi rồi!");
         }
     }
-
-//    public Token login(User user) {
-////        User infoUser = userRepository.findByUserName(user.getUsername());
-//        UserPrincipal userPrincipal = new UserPrincipal();
-//
-//        if (null == user || !bCryptPasswordEncoder.matches(user.getPassword(),
-//                userPrincipal.getPassword()))
-//        {
-//            throw new DuplicateRecordException("tài khoản hoặc mật khẩu không đúng!");
-//        }
-//
-////        if (null != infoUser) {
-////            Set<String> authorities = new HashSet<>();
-////
-////            if (null != user.getRoles()) {
-////                for(Role role:user.getRoles()){
-////                    authorities.add(role.getRoleKey());
-////                    for(Permission permission:role.getPermissions()){
-////                        authorities.add(permission.getPermissionKey());
-////                    }
-////                }
-////            }
-////            userPrincipal.setUserId(infoUser.getId());
-////            userPrincipal.setUsername(infoUser.getUsername());
-////            userPrincipal.setPassword(infoUser.getPassword());
-////            userPrincipal.setAuthorities(authorities);
-////        }
-//
-//        Token token = new Token();
-////        token.setToken(jwtUtil.generateToken(userPrincipal));
-////        token.setTokenExpDate(jwtUtil.generateExpirationDate());
-////        tokenService.save(token);
-//
-//        return token;
-//    }
 
 }

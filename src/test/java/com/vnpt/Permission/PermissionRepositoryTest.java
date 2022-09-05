@@ -17,7 +17,7 @@ public class PermissionRepositoryTest {
 
     @Test
     public void getPermissionKeyByUserId(){
-        List<String> permissionKeys = permissionRepository.findPermissionKeyByUserId(1L);
+        List<String> permissionKeys = permissionRepository.findPermissionKeyByUserId(5L);
         Assertions.assertThat(permissionKeys).size().isGreaterThan(0);
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 public class DataPaginate<V> {
     private List<V> content;
     private int pageNumber;
-    private int totalPages;
+    private long totalCount;
 
     public DataPaginate() {
     }
@@ -26,11 +26,11 @@ public class DataPaginate<V> {
         this.pageNumber = pageNumber;
     }
 
-    public int getTotalPages() {
-        return totalPages;
+    public long getTotalCount() {
+        return totalCount;
     }
 
-    public void setTotalPages(int totalPages) {
-        this.totalPages = totalPages;
+    public void setTotalCount(long totalCount) {
+        this.totalCount = totalCount;
     }
 }

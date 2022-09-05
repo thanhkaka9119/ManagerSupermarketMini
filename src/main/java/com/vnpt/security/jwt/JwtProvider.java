@@ -17,7 +17,7 @@ public class JwtProvider {
     private static final Logger LOGGER = LogManager.getLogger(JwtProvider.class);
 
     //Thời gian có hiệu lực của chuỗi jwt
-    private final long JWT_EXPIRATION = 400000L;
+    private final long JWT_EXPIRATION = 120000L;
 
     public String createToken(Authentication authentication) {
 

@@ -62,11 +62,22 @@ public class AuthenController {
     }
 
     @GetMapping("/review")
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_CREATE')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_READ')")
     @ResponseStatus(HttpStatus.OK)
     public Map<String, Object> randommStuff(){
         Map<String, Object> response = new HashMap<>();
         response.put("data", "JWT Hợp lệ mới có thể thấy được message 2 này");
+        response.put("message", "success");
+        response.put("status", 201);
+        return response;
+    }
+
+    @GetMapping("/reviews")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_CREATE')")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<String, Object> randommsStuff(){
+        Map<String, Object> response = new HashMap<>();
+        response.put("data", "JWT Hợp lệ mới có thể thấy được message 3 này");
         response.put("message", "success");
         response.put("status", 201);
         return response;

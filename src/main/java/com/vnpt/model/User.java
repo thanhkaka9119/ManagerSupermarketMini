@@ -1,5 +1,7 @@
 package com.vnpt.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -37,30 +39,53 @@ public class User {
     @Column(name = "url_avatar")
     private String urlAvatar;
 
-    @Column(name = "gender", length = 50)
-    private String gender;
-
     @Column(name = "user_name", length = 50)
     private String username;
 
     @Column(name = "password")
     private String password;
 
-    @Column(name = "enabled")
-    private boolean enabled;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<Role> roles;
 
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<UserRolePermission> userRolePermissions;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Order> orders;
 
     @Transient
     private ArrayList<String> permissions;
 
+    @Transient
+    private List<Long> roleIdList;
+
     public User() {
     }
 
-    public User(String username , String password) {
-        this.username  = username;
-        this.password = password;
+    public User(long id, String code, String name, Date birthday, String address,
+                String email, String identifier, String urlAvatar) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.birthday = birthday;
+        this.address = address;
+        this.email = email;
+        this.identifier = identifier;
+        this.urlAvatar = urlAvatar;
+    }
+
+    public User(long id, String code, String name, Date birthday, String address,
+                String email, String identifier) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.birthday = birthday;
+        this.address = address;
+        this.email = email;
+        this.identifier = identifier;
     }
 
     public User(long id, String name, String username, String password) {
@@ -70,8 +95,14 @@ public class User {
         this.password = password;
     }
 
+    public User(long id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
     public User(String code, String name, Date birthday, String address,
-                String email, String identifier, String urlAvatar, String gender, String password) {
+                String email, String identifier, String urlAvatar, String username, String password) {
         this.code = code;
         this.name = name;
         this.birthday = birthday;
@@ -79,8 +110,19 @@ public class User {
         this.email = email;
         this.identifier = identifier;
         this.urlAvatar = urlAvatar;
-        this.gender = gender;
+        this.username = username;
         this.password = password;
+    }
+
+    public User(String code, String name, Date birthday, String address, String email, String identifier, String urlAvatar, String username) {
+        this.code = code;
+        this.name = name;
+        this.birthday = birthday;
+        this.address = address;
+        this.email = email;
+        this.identifier = identifier;
+        this.urlAvatar = urlAvatar;
+        this.username = username;
     }
 
     public String getCode() {
@@ -163,22 +205,6 @@ public class User {
         this.password = password;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -187,19 +213,27 @@ public class User {
         this.username = username;
     }
 
-    public List<UserRolePermission> getUserRolePermissions() {
-        return userRolePermissions;
-    }
-
-    public void setUserRolePermissions(List<UserRolePermission> userRolePermissions) {
-        this.userRolePermissions = userRolePermissions;
-    }
-
     public ArrayList<String> getPermissions() {
         return permissions;
     }
 
     public void setPermissions(ArrayList<String> permissions) {
         this.permissions = permissions;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public List<Long> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<Long> roleIdList) {
+        this.roleIdList = roleIdList;
     }
 }

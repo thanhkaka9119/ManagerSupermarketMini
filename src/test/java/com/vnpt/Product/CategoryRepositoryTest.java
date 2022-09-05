@@ -13,7 +13,7 @@ public class CategoryRepositoryTest {
 
     @Test
     public void getAll(){
-        List<Product> productList = productRepository.getAll();
+        List<Product> productList = productRepository.findAll();
         Assertions.assertThat(productList).size().isGreaterThan(0);
     }
 
