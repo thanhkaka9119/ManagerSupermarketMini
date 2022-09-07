@@ -21,7 +21,7 @@ public class ProductController {
 
     @GetMapping("/products")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_READ')")
     public Map<String, Object> getProductList() {
         ProductService productServiceMore = (ProductService) productService;
         Map<String, Object> response = new HashMap<>();
@@ -34,7 +34,7 @@ public class ProductController {
 
     @GetMapping("/products/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('PROD_EDIT','PROD_CREATE')")
     public Map<String, Object> getProductById(@PathVariable(name = "id") long id) {
         ProductService productServiceMore = (ProductService) productService;
         Map<String, Object> response = new HashMap<>();
@@ -46,7 +46,7 @@ public class ProductController {
 
     @PostMapping("/products")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_CREATE')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_CREATE')")
     public Map<String, Object> saveProduct(@RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Product product = gson.fromJson(gson.toJson(params), Product.class);
@@ -59,7 +59,7 @@ public class ProductController {
 
     @PatchMapping("/products/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_EDIT')")
     public Map<String, Object> updateProductById(@PathVariable(name = "id") long id, @RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Product product = gson.fromJson(gson.toJson(params), Product.class);
@@ -72,14 +72,14 @@ public class ProductController {
 
     @DeleteMapping("/products/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_DELETE')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_DELETE')")
     public void deleteProductById(@PathVariable(name = "id") long id) {
         productService.deleteById(id);
     }
 
     @GetMapping(path = {"/products/page"})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_READ')")
     public Map<String, Object> getByPageNumber(@RequestParam(name = "page", defaultValue = "0") int page,
                                                @RequestParam(name = "per_page", defaultValue = "10") int per_page) {
         Map<String, Object> response = new HashMap<>();
@@ -92,7 +92,7 @@ public class ProductController {
 
     @GetMapping("/products/search")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_PROD_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('PROD_READ')")
     public Map<String, Object> readProductsWithFilter(@RequestParam(name = "searchString") String searchString,
                                                       @RequestParam(name = "page") int page,
                                                       @RequestParam(name = "per_page") int per_page) {

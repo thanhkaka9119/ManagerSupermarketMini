@@ -24,7 +24,7 @@ public class CategoryController {
 
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_READ')")
     public Map<String, Object> getList() {
         Map<String, Object> response = new HashMap<>();
         response.put("data", categoryService.getList());
@@ -35,7 +35,7 @@ public class CategoryController {
 
     @GetMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('CATE_EDIT','CATE_CREATE')")
     public Map<String, Object> getById(@PathVariable(name = "id") long id) {
         Category category = (Category) categoryService.getById(id);
         if(category == null) throw new NotFoundException("id không tồn tại");
@@ -48,7 +48,7 @@ public class CategoryController {
 
     @PostMapping("/categories")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_CREATE')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_CREATE')")
     public Map<String, Object> save(@RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Category category = gson.fromJson(gson.toJson(params), Category.class);
@@ -62,7 +62,7 @@ public class CategoryController {
 
     @PatchMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_EDIT')")
     public Map<String, Object> updateById(@PathVariable(name = "id") long id, @RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Category category = gson.fromJson(gson.toJson(params), Category.class);
@@ -76,14 +76,14 @@ public class CategoryController {
 
     @DeleteMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_DELETE')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_DELETE')")
     public void deleteById(@PathVariable(name = "id") long id) {
         categoryService.deleteById(id);
     }
 
     @GetMapping(path = {"/categories/page"})
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_READ')")
     public Map<String, Object> getByPageNumber(@RequestParam(name = "page", defaultValue = "0") int page,
                                                @RequestParam(name = "per_page", defaultValue = "10") int per_page) {
         Map<String, Object> response = new HashMap<>();
@@ -96,7 +96,7 @@ public class CategoryController {
 
     @GetMapping("/categories/search")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_CATE_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('CATE_READ')")
     public Map<String, Object> readCategoryWithFilter(@RequestParam(name = "searchString") String searchString,
                                                       @RequestParam(name = "page") int page,
                                                       @RequestParam(name = "per_page") int per_page) {

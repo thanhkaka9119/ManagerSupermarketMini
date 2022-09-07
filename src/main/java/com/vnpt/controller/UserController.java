@@ -20,7 +20,7 @@ public class UserController {
 
     @GetMapping("/users")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_READ')")
     public Map<String, Object> getUserList() {
         Map<String, Object> response = new HashMap<>();
         response.put("data", userService.getList());
@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('USER_EDIT','USER_CREATE')")
     public Map<String, Object> getUserById(@PathVariable(name = "id") long id) {
         UserService userServiceMore = (UserService) userService;
         Map<String, Object> response = new HashMap<>();
@@ -43,7 +43,7 @@ public class UserController {
 
     @RequestMapping(path = "/users", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_CREATE')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_CREATE')")
     public Map<String, Object> saveUser(@ModelAttribute User user) {
         Map<String, Object> response = new HashMap<>();
         response.put("data", userService.save(user));
@@ -54,7 +54,7 @@ public class UserController {
 
     @RequestMapping(path = "/users/{id}", method = RequestMethod.PATCH, consumes = {"multipart/form-data"})
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_EDIT')")
     public Map<String, Object> updateUserById(@PathVariable(name = "id") long id, @ModelAttribute User user) {
         Map<String, Object> response = new HashMap<>();
         response.put("data", userService.updateById(id, user));
@@ -65,14 +65,14 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_DELETE')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_DELETE')")
     public void deleteUserById(@PathVariable(name = "id") long id) {
         userService.deleteById(id);
     }
 
     @GetMapping("/users/page")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_READ')")
     public Map<String, Object> getByPageNumber(@RequestParam(name = "page", defaultValue = "0") int page,
                                                @RequestParam(name = "per_page", defaultValue = "10") int perPage) {
         Map<String, Object> response = new HashMap<>();
@@ -85,7 +85,7 @@ public class UserController {
 
     @GetMapping("/users/search")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_USER_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('USER_READ')")
     public Map<String, Object> readUsersWithFilter(@RequestParam("searchString") String searchString,
                                                    @RequestParam(name = "page") int page,
                                                    @RequestParam(name = "per_page") int per_page) {

@@ -41,7 +41,7 @@ public class AuthenController {
 
         UserPrinciple userPrinciple = (UserPrinciple) authentication.getPrincipal();
 
-        JwtResponse jwtResponse = new JwtResponse(token,userPrinciple.getUsername(),userPrinciple.getAuthorities());
+        JwtResponse jwtResponse = new JwtResponse(userPrinciple.getId(),token,userPrinciple.getUsername(),userPrinciple.getAuthorities());
 
         Map<String, Object> response = new HashMap<>();
         response.put("data", jwtResponse);

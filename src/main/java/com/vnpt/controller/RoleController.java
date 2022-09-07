@@ -22,7 +22,7 @@ public class RoleController {
 
     @GetMapping("/roles")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLES_READ')")
     public Map<String, Object> getList() {
         RoleService roleServiceMore = (RoleService) roleService;
         Map<String, Object> response = new HashMap<>();
@@ -34,7 +34,7 @@ public class RoleController {
 
     @GetMapping("/roles/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('ROLES_EDIT','ROLES_CREATE')")
     public Map<String, Object> getById(@PathVariable(name = "id") long id) {
         Map<String, Object> response = new HashMap<>();
         response.put("data", roleService.getById(id));
@@ -45,7 +45,7 @@ public class RoleController {
 
     @GetMapping("/roles/permissions")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_READ')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLES_READ')")
     public Map<String, Object> getListPermission() {
         RoleService roleServiceMore = (RoleService) roleService;
         Map<String, Object> response = new HashMap<>();
@@ -57,7 +57,7 @@ public class RoleController {
 
     @PostMapping("/roles")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_CREATE')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLES_CREATE')")
     public Map<String, Object> save(@RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Role role = gson.fromJson(gson.toJson(params), Role.class);
@@ -70,7 +70,7 @@ public class RoleController {
 
     @PatchMapping("/roles/{id}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_EDIT')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLES_EDIT')")
     public Map<String, Object> updateById(@PathVariable(name = "id") long id,@RequestBody Map<String,Object> params) {
         Gson gson = new Gson();
         Role role = gson.fromJson(gson.toJson(params), Role.class);
@@ -83,7 +83,7 @@ public class RoleController {
 
     @DeleteMapping("/roles/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("isAuthenticated() and hasRole('ROLE_ROLES_DELETE')")
+    @PreAuthorize("isAuthenticated() and hasRole('ROLES_DELETE')")
     public void deleteById(@PathVariable(name = "id") long id) {
         roleService.deleteById(id);
     }
